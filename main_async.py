@@ -34,7 +34,7 @@ async def chat(user_message, app, config, verbose):
 # Define an async main function
 async def main():
     _ = load_dotenv(find_dotenv())
-    app = init_app(model_name="gemini-1.5-pro")
+    app = init_app(model_name="gpt-3.5-turbo",)
     thread_id = get_thread_id()
     config = {"configurable": {"thread_id": thread_id}}
     verbose = True

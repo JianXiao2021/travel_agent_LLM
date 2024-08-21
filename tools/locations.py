@@ -2,6 +2,7 @@ import os
 from langchain_core.tools import tool
 from typing import Annotated, List, Dict
 import requests
+import json
 from dotenv import load_dotenv, find_dotenv
 
 _ = load_dotenv(find_dotenv())
@@ -30,11 +31,37 @@ def get_location_coordinate(
         })
     return location_coordinates
 
+# @tool
+# def get_batch_location_coordinates(
+#     locations: Annotated[List[Dict[str, str]], "要获取经纬度的地点及其所在城市名称的列表。列表中每个元素是包含'location'和'city'两个键值对的字典，分别表示地点名称及其所在城市名称。城市名称如果不能确定可以不填"],
+# ) -> Dict[str, List[Dict[str, str]]]:
+#     """位置获取工具。根据多个地点名称和城市名称获取这些地点的经纬度。返回一个字典列表，字典的键是所查询的地点名称，值是包含所有同名地点详细地址、经纬度及其所在城市编码的列表"""
+#     results = {}
+#     for loc in locations:
+#         location = loc.get('location')
+#         city = loc.get('city')
+#         location_coordinates = get_location_coordinate(location, city)
+#         results[location] = location_coordinates
+#     return results
+
+# # test the tool
+# if __name__ == "__main__":
+#     print(get_batch_location_coordinates.args_schema.schema())
+#     locations = [
+#         {"location": "梦幻家园"},
+#         {"location": "迪士尼乐园", "city": "上海"},
+#         {"location": "北京路", "city": "广州"}
+#     ]
+#     a=get_batch_location_coordinates.invoke({"locations": locations})
+#     print(a)
+
+# Unfortunatly, germini-1.5-pro does not support list as function input, so we have to use a string as input
 @tool
 def get_batch_location_coordinates(
-    locations: Annotated[List[Dict[str, str]], "要获取经纬度的地点及其所在城市名称的列表。列表中每个元素是包含'location'和'city'两个键值对的字典，分别表示地点名称及其所在城市名称。城市名称如果不能确定可以不填"],
+    locations_str: Annotated[str, """包含所有地点及其所在城市的字符串。格式为:'[{"location": "地点1", "city": "城市1"}, {"location": "地点2", "city": ""}, ...]'城市名称如果不能确定可以不填。"""],
 ) -> Dict[str, List[Dict[str, str]]]:
-    """位置获取工具。根据多个地点名称和城市名称获取这些地点的经纬度。返回一个字典列表，字典的键是所查询的地点名称，值是包含所有同名地点详细地址、经纬度及其所在城市编码的列表"""
+    """位置获取工具。根据多个地点名称及其所在的城市名称获取这些地点的经纬度。返回一个字典列表，字典的键是所查询的地点名称，值是包含所有同名地点详细地址、经纬度及其所在城市编码的列表"""
+    locations = json.loads(locations_str)
     results = {}
     for loc in locations:
         location = loc.get('location')
@@ -46,10 +73,6 @@ def get_batch_location_coordinates(
 # test the tool
 if __name__ == "__main__":
     print(get_batch_location_coordinates.args_schema.schema())
-    locations = [
-        {"location": "梦幻家园"},
-        {"location": "迪士尼乐园", "city": "上海"},
-        {"location": "北京路", "city": "广州"}
-    ]
-    a=get_batch_location_coordinates.invoke({"locations": locations})
+    locations_str = """[{"location": "梦幻家园"}, {"location": "迪士尼乐园", "city": "上海"}, {"location": "北京路", "city": "广州"}]"""
+    a=get_batch_location_coordinates.invoke({"locations_str": locations_str})
     print(a)

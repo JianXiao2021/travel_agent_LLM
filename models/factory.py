@@ -12,6 +12,7 @@ class LLMFactory:
         if model.startswith('gpt'):
             return ChatOpenAI(model=model, temperature = temperature, streaming=True)
 
+        # Notice that currently only gemini-1.5-flash-latest and gemini-1.5-pro-latest support function-calling
         if model.startswith('gemini'):
             return ChatGoogleGenerativeAI(model=model, temperature = temperature, streaming=True)
 

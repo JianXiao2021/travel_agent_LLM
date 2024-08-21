@@ -6,7 +6,7 @@ from agents.agents import AsyncAgent as MainAgent
 # from agents.agents import SyncAgent as MainAgent
 from langgraph.graph import StateGraph, START
 from states.state import PublicState
-from agents.agents import init_current_task_history
+# from agents.agents import init_current_task_history
 
 from langgraph.prebuilt import ToolNode, tools_condition
 from prompts.main import agent_prompt_template
@@ -19,7 +19,7 @@ memory = AsyncSqliteSaver.from_conn_string(":memory:")
 def create_graph(model_name):
     graph = StateGraph(PublicState)
 
-    graph.add_node("init", init_current_task_history)
+    # graph.add_node("init", init_current_task_history)
 
     tools = [web_search,
              get_batch_location_coordinates,
@@ -40,8 +40,9 @@ def create_graph(model_name):
     tool_node = ToolNode(tools)
     graph.add_node("tools", tool_node)
 
-    graph.add_edge(START, "init")
-    graph.add_edge("init", "agent")
+    # graph.add_edge(START, "init")
+    # graph.add_edge("init", "agent")
+    graph.add_edge(START, "agent")
     graph.add_conditional_edges("agent", tools_condition)  # Will either direct to a specific tool in tools or to the END node
     graph.add_edge("tools", "agent")
 
