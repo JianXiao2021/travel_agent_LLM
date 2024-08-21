@@ -24,6 +24,9 @@ def InitWebDriver():
     options.add_argument("--disable-gpu")
     options.add_argument("--no-sandbox")
     options.add_argument('log-level=3')  # 设置日志等级为3，抑制大部分信息
+    options.add_argument("--disable-3d-apis")
+    options.add_argument("--ignore-certificate-error")
+    options.add_argument("--ignore-ssl-errors")
     options.add_experimental_option("excludeSwitches", ["ignore-certificate-errors", "enable-automation"])
 
     # Temporarily unset proxy environment variables to avoid proxy issues
@@ -55,7 +58,7 @@ def get_scenic_spots(driver, soup):
     spots = []
     # 获取景点列表
     spot_elements = soup.find_all('ul', class_='scenic-list clearfix')
-    for spot in spot_elements[:2]:  # 只取前两页
+    for spot in spot_elements[:1]:  # 只取第一页
         for item in spot.find_all('li'):
             spot_name = item.find('h3').text.strip()
             spot_url = item.find('a')['href']

@@ -21,7 +21,8 @@ def get_location_coordinate(
     r = requests.get(url)
     result = r.json()
     if result['status'] == '0':
-        raise ValueError(f"Failed to get the coordinate of the location: {location}. Error message: {result['info']}")
+        error_msg = f"获取以下地点坐标失败：{location}。错误信息: {result['info']}。请检查地点和城市名称是否正确，或者考虑该名称是否是俗称，能否推断出其正式名称。"
+        return error_msg
     location_coordinates = []
     for item in result['geocodes']:
         location_coordinates.append({
@@ -60,7 +61,7 @@ def get_location_coordinate(
 def get_batch_location_coordinates(
     locations_str: Annotated[str, """包含所有地点及其所在城市的字符串。格式为:'[{"location": "地点1", "city": "城市1"}, {"location": "地点2", "city": ""}, ...]'城市名称如果不能确定可以不填。"""],
 ) -> Dict[str, List[Dict[str, str]]]:
-    """位置获取工具。根据多个地点名称及其所在的城市名称获取这些地点的经纬度。返回一个字典列表，字典的键是所查询的地点名称，值是包含所有同名地点详细地址、经纬度及其所在城市编码的列表"""
+    """位置获取工具。根据多个地点名称及其所在的城市名称获取这些地点的经纬度。返回一个字典列表，其中每个字典的键是所查询的地点名称，值是包含所有同名地点详细地址、经纬度及其所在城市编码的列表。需要分析列表从中挑选出对应正确地点的经纬度。"""
     locations = json.loads(locations_str)
     results = {}
     for loc in locations:
@@ -73,6 +74,6 @@ def get_batch_location_coordinates(
 # test the tool
 if __name__ == "__main__":
     print(get_batch_location_coordinates.args_schema.schema())
-    locations_str = """[{"location": "梦幻家园"}, {"location": "迪士尼乐园", "city": "上海"}, {"location": "北京路", "city": "广州"}]"""
+    locations_str = """[{"location": "梦幻家园"}, {"location": "圣索非亚大教堂", "city": "哈尔滨"}, {"location": "北京路", "city": "广州"}]"""
     a=get_batch_location_coordinates.invoke({"locations_str": locations_str})
     print(a)
