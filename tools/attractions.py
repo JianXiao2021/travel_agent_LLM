@@ -13,7 +13,6 @@ from typing import Annotated
 from dotenv import load_dotenv, find_dotenv
 
 def InitWebDriver():
-    _ = load_dotenv(find_dotenv())
     # 设置日志等级
     LOGGER.setLevel(logging.WARNING)
     edge_driver_path = os.environ.get("EDGE_DRIVER_PATH")
@@ -93,6 +92,7 @@ def get_attractions_information(
 ) -> dict:
     """景点搜索工具。获取目的地概览和景点信息列表"""
 
+    _ = load_dotenv(find_dotenv())
     driver, original_http_proxy, original_https_proxy = InitWebDriver()
     
     base_search_url = 'https://www.mafengwo.cn/search/q.php'

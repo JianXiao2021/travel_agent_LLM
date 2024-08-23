@@ -12,7 +12,7 @@ warnings.filterwarnings("ignore", category=LangChainBetaWarning)
 # Streaming output (Reference: https://langchain-ai.github.io/langgraph/how-tos/streaming-tokens/#streaming-llm-tokens)
 async def chat(user_message, app, config, verbose):
     formatted_user_message = HumanMessage(content=user_message)
-    async for event in app.astream_events({"chat_history": formatted_user_message}, config=config, version="v1"):
+    async for event in app.astream_events({"messages": formatted_user_message}, config=config, version="v1"):
         kind = event["event"]
         if kind == "on_chat_model_stream":
             content = event["data"]["chunk"].content
@@ -22,7 +22,7 @@ async def chat(user_message, app, config, verbose):
                 # So we only print non-empty content
                 print(content, end="")
         elif kind == "on_tool_start":
-            print("--")
+            print("\n--")
             print(
                 f"Starting tool: {event['name']} with inputs: {event['data'].get('input')}"
             )
@@ -34,8 +34,8 @@ async def chat(user_message, app, config, verbose):
 # Define an async main function
 async def main():
     _ = load_dotenv(find_dotenv())
-    app = init_app(model_name="gpt-4o")
-    # app = init_app(model_name="gpt-3.5-turbo")
+    # app = init_app(model_name="gpt-4o")
+    app = init_app(model_name="gpt-3.5-turbo")
     # app = init_app(model_name="gemini-1.5-flash-latest")
     # app = init_app(model_name="gemini-1.5-pro-latest")
     thread_id = get_thread_id()

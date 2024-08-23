@@ -1,31 +1,30 @@
 # Reference: https://langchain-ai.github.io/langgraph/tutorials/introduction/#part-2-enhancing-the-chatbot-with-tools
 
 from langgraph.checkpoint.aiosqlite import AsyncSqliteSaver
-from agents.agents import AsyncAgent as MainAgent
-# from langgraph.checkpoint.sqlite import SqliteSaver
-# from agents.agents import SyncAgent as MainAgent
+from langgraph.checkpoint.sqlite import SqliteSaver
 from langgraph.graph import StateGraph, START
 from states.state import PublicState
-# from agents.agents import init_current_task_history
 
 from langgraph.prebuilt import ToolNode, tools_condition
 from prompts.main import agent_prompt_template
 from tools import *
 
-memory = AsyncSqliteSaver.from_conn_string(":memory:")
-# memory = SqliteSaver.from_conn_string(":memory:")
 
-
-def create_graph(model_name):
+def create_graph(model_name, is_async=True):
     graph = StateGraph(PublicState)
 
-    # graph.add_node("init", init_current_task_history)
-
     tools = [web_search,
-             get_batch_location_coordinates,
+             get_location_coordinate,
              get_attractions_information,
              route_planning,
-             save_info_and_clear_history]
+             search_nearby_poi,
+            #  save_info_and_clear_history,
+            ]
+
+    if is_async:
+        from agents.agents import AsyncAgent as MainAgent
+    else:
+        from agents.agents import SyncAgent as MainAgent
 
     travel_agent = MainAgent(
         model_name=model_name,
@@ -48,7 +47,11 @@ def create_graph(model_name):
 
     return graph
 
-def init_app(model_name):
-    graph = create_graph(model_name)
+def init_app(model_name, is_async=True):
+    graph = create_graph(model_name, is_async)
+    if is_async:
+        memory = AsyncSqliteSaver.from_conn_string(":memory:")
+    else:
+        memory = SqliteSaver.from_conn_string(":memory:")
     app = graph.compile(checkpointer=memory)
     return app

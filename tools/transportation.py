@@ -6,8 +6,8 @@ from dotenv import load_dotenv, find_dotenv
 
 @tool
 def route_planning(
-    origin: Annotated[str, "出发点的经纬度，以“,”分割，经度在前，纬度在后，如117.500244, 40.417801"],
-    destination: Annotated[str, "目的地的经纬度，以“,”分割，经度在前，纬度在后，如117.500244, 40.417801"],
+    origin: Annotated[str, "出发点的经纬度，以“,”分割，经度在前，纬度在后，如117.500244,40.417801"],
+    destination: Annotated[str, "目的地的经纬度，以“,”分割，经度在前，纬度在后，如117.500244,40.417801"],
     origin_city_code: Annotated[str, "出发点所在的城市编码"],
     dest_city_code: Annotated[str, "目的地所在的城市编码。"]
 ) -> dict:
@@ -15,10 +15,7 @@ def route_planning(
     _ = load_dotenv(find_dotenv())
     amap_key = os.getenv("AMAP_API_KEY")
     base_url = "https://restapi.amap.com/v3/direction/transit/integrated?"
-    if dest_city_code is None:
-        url = f"{base_url}origin={origin}&destination={destination}&city={origin_city_code}&key={amap_key}"
-    else:
-        url = f"{base_url}origin={origin}&destination={destination}&city={origin_city_code}&cityd={dest_city_code}&key={amap_key}"
+    url = f"{base_url}origin={origin}&destination={destination}&city={origin_city_code}&cityd={dest_city_code}&key={amap_key}"
     r = requests.get(url)
     result = r.json()
     if result['status'] == '0':
@@ -47,5 +44,6 @@ if __name__ == "__main__":
         "origin": "126.634,45.774",
         "destination": "127.954017,45.212528",
         "origin_city_code": "0451",
-        "dest_city_code": "0451"})
+        "dest_city_code": "0451",
+        })
     print(a)
