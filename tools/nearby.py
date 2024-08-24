@@ -8,7 +8,7 @@ from dotenv import load_dotenv, find_dotenv
 def search_nearby_poi(
     location: Annotated[str, "中心点坐标，以“,”分割，经度在前，纬度在后，如117.500244,40.417801"],
     city: Annotated[str, "查询中心点所在的城市编码。"],
-    types: Annotated[str, "查询POI类型。多个类型用“|”分割。如果查询住宿，只能填写以下类型：“宾馆酒店”“旅馆招待所”。如果查询餐饮，只能填写以下类型：“中餐厅”“外国餐厅”“快餐厅”“咖啡厅。关键字和POI类型二者至少填写一个。"] = "",
+    types: Annotated[str, "查询POI类型。多个类型用“|”分割。如果查询住宿，只能填写以下类型：“宾馆酒店”“旅馆招待所”。如果查询餐饮，只能填写以下类型：“中餐厅”“外国餐厅”“快餐厅”。关键字和POI类型二者至少填写一个。"] = "",
     keyword: Annotated[str, "要搜索的关键字。除非用户有特别指定具体的地点名称时才填写，如“星巴克”“希尔顿”等，否则不要填写！一次只能搜索一个关键字。关键字和POI类型二者至少填写一个。"] = "",
     radius: Annotated[int, "查询半径，单位米。"] = 5000,
     offset: Annotated[int, "每页搜索结果数目。"] = 20,
