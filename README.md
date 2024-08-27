@@ -7,7 +7,8 @@
 
 ## 基本工作流程
 
-![workflow](workflow.png)
+<img src='./workflow.png'>
+<br>
 
 ## 使用
 

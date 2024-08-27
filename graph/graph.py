@@ -28,7 +28,7 @@ def create_graph(model_name, is_async=True):
 
     travel_agent = MainAgent(
         model_name=model_name,
-        temperature=0.7,
+        temperature=0,
         prompt_template=agent_prompt_template,
         tools=tools)
     # Pass the "__call__" function in the ChatterAgent class to add_node. This function will be called when the node is invoked.
